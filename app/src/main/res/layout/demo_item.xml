@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout
+	xmlns:android="http://schemas.android.com/apk/res/android"
+	android:layout_width="match_parent"
+	android:layout_height="80dp"
+	android:background="@drawable/linerlayout_water_selector"
+	android:clickable="true"
+	android:focusable="true"
+	android:orientation="horizontal">
+
+	<LinearLayout
+		android:layout_width="wrap_content"
+		android:layout_height="match_parent"
+		android:orientation="vertical"
+		android:gravity="center">
+
+		<View
+			android:background="?android:attr/dividerHorizontal"
+			android:layout_width="5dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.0"/>
+
+		<TextView
+			android:focusable="false"
+			android:layout_width="wrap_content"
+			android:layout_height="wrap_content"
+			android:text="3月4日"
+			android:id="@+id/demo_item_time"
+			android:textColor="#FF2EA6FF"
+			android:gravity="center"
+			android:layout_marginLeft="10dp"
+			android:layout_marginRight="10dp"/>
+
+		<View
+			android:background="?android:attr/dividerHorizontal"
+			android:layout_width="5dp"
+			android:layout_height="match_parent"
+			android:layout_weight="1.0"/>
+
+	</LinearLayout>
+
+	<View
+		android:background="?android:attr/dividerHorizontal"
+		android:layout_width="1dp"
+		android:layout_height="match_parent"
+		android:layout_marginLeft="10dp"
+		android:layout_marginRight="10dp"
+		android:visibility="invisible"/>
+
+	<TextView
+		android:focusable="false"
+		android:id="@+id/demo_item_content"
+		android:layout_width="match_parent"
+		android:layout_height="match_parent"
+		android:layout_gravity="center"
+		android:gravity="center"
+		android:text="便签内容:"
+		android:layout_margin="10dp"
+		android:background="#FF0AA5FF"/>
+
+</LinearLayout>
+
