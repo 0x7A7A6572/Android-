@@ -1,9 +1,11 @@
 package com.learndemo.androidx.FlexibleAdapterLearn;
 
 import android.graphics.Bitmap;
+import android.util.Log;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.learndemo.androidx.R;
 
@@ -49,6 +51,10 @@ public class Gun extends AbstractFlexibleItem<com.learndemo.androidx.FlexibleAda
 
         @Override
         public com.learndemo.androidx.FlexibleAdapterLearn.Gun.MyViewHolder createViewHolder(View view, FlexibleAdapter<IFlexible> adapter) {
+           for(int i = 0;i < adapter.getItemCount(); i++){
+               Log.v("adapter",adapter.getItemViewType(i) + " >>> " + i);
+           }
+
             return new com.learndemo.androidx.FlexibleAdapterLearn.Gun.MyViewHolder(view, adapter);
         }
 
@@ -61,6 +67,13 @@ public class Gun extends AbstractFlexibleItem<com.learndemo.androidx.FlexibleAda
             holder.gun_name.setEnabled(isEnabled());
             holder.gun_img.setImageBitmap(img);
             holder.gun_introduction.setText(introduction);
+
+            boolean md = adapter.isSelected(position);
+            if(md){
+                holder.gun_name.setBackgroundColor(0xFF2B2B2B);
+            }else{
+                holder.gun_name.setBackgroundColor(0xFFFFFFFF);
+            }
         }
 
         public class MyViewHolder extends FlexibleViewHolder {

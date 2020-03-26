@@ -57,6 +57,16 @@
 		android:text="便签内容:"
 		android:layout_margin="10dp"
 		android:background="#FF0AA5FF"/>
+	<CheckBox
+		android:id="@+id/demo_item_checkbox"
+		android:layout_weight="3"
+		android:visibility="gone"
+		android:layout_width="match_parent"
+		android:layout_height="wrap_content"
+		android:layout_alignParentRight="true"
+		android:clickable="false"
+		android:focusable="false"
+		android:focusableInTouchMode="false"/>
 
 </LinearLayout>
 

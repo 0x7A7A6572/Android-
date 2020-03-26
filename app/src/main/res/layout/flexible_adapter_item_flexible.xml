@@ -6,6 +6,7 @@
     android:layout_margin="4dp">
 
     <LinearLayout
+        android:id="@+id/item_parent"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:orientation="horizontal">

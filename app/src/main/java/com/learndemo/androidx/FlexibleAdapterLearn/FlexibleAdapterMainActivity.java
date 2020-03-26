@@ -8,6 +8,7 @@ import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -21,41 +22,79 @@ import java.util.ArrayList;
 import java.util.List;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
-import eu.davidea.flexibleadapter.items.IFlexible;
+import eu.davidea.flexibleadapter.SelectableAdapter;
 
 
 public class FlexibleAdapterMainActivity extends AppCompatActivity implements
-        ActionMode.Callback, FlexibleAdapter.OnItemLongClickListener {
+        ActionMode.Callback, FlexibleAdapter.OnItemLongClickListener  {
+
+    public static FlexibleAdapter<Gun> mAdapter;
+    private ActionMode mActionMode;
+    Context THIS;
     Context context;
+    private ActionMode mode;
+    private Menu menu;
+    RecyclerView recyclerView;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         context = getApplicationContext();
+        THIS = this;
         setContentView(R.layout.flexible_adapter_activity_main);
 // Optional but strongly recommended: Compose the initial list
         List<Gun> myItems = getDatabaseList();
 
 // Initialize the Adapter
-        FlexibleAdapter<Gun> adapter = new FlexibleAdapter<>(myItems);
+         mAdapter = new FlexibleAdapter<>(myItems);
+
+        mAdapter.addListener(onLongClickListenerAdapter1);
+        mAdapter.addListener(clickListenerAdapter1);
 
 
-        adapter.addListener(onLongClickListenerAdapter1);
-        adapter.addListener(clickListenerAdapter1);
-
-        RecyclerView recyclerView;
         recyclerView = findViewById(R.id.mRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        recyclerView.setAdapter(adapter);
+        recyclerView.setAdapter(mAdapter);
+        recyclerView.setItemViewCacheSize(0);
     }
+    private void toggleSelection(int position) {
+        // Mark the position selected
+        mAdapter.toggleSelection(position);
+
+        int count = mAdapter.getSelectedItemCount();
+
+        if (count == 0) {
+            mActionMode.finish();
+            mActionMode = null;
+        } else {
+            setContextTitle(count);
+        }
+        mAdapter.notifyDataSetChanged();
+    }
+
+    private void setContextTitle(int count) {
+        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
+                getString(R.string.action_selected_one) :
+                getString(R.string.action_selected_many)));
+    }
+
 
     private FlexibleAdapter.OnItemClickListener clickListenerAdapter1 =
             new FlexibleAdapter.OnItemClickListener() {
                 @Override
                 public boolean onItemClick(View view, int position) {
-                    Toast.makeText(context, "点击事件", Toast.LENGTH_SHORT).show();
-                    return false;
+                    if (mActionMode != null && position != RecyclerView.NO_POSITION) {
+                        // Mark the position selected
+                        toggleSelection(position);
+
+                        return true;
+                    } else {
+
+                        // Handle the item click listener
+                        // We don't need to activate anything
+                        return false;
+                    }
                 }
             };
 
@@ -63,6 +102,14 @@ public class FlexibleAdapterMainActivity extends AppCompatActivity implements
             new FlexibleAdapter.OnItemLongClickListener() {
                 @Override
                 public void onItemLongClick(int position) {
+                    if (mActionMode == null) {
+                        mActionMode = startActionMode(new SelectionCallBack(mAdapter,THIS));
+                        toggleSelection(position);
+                    }else {
+                        mAdapter.clearSelection();
+                        toggleSelection(-1);
+                    }
+
                     Toast.makeText(context, "长按事件", Toast.LENGTH_SHORT).show();
                 }
             };

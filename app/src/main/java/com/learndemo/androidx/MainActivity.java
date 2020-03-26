@@ -15,9 +15,10 @@ import android.icu.text.SimpleDateFormat;
 import java.util.Date;
 import com.google.gson.Gson;
 import android.util.Log;
+import android.view.View;
+import android.widget.Toast;
+
 import com.google.gson.reflect.TypeToken;
-import eu.davidea.flexibleadapter.items.IFlexible;
-import eu.davidea.flexibleadapter.FlexibleAdapter;
 
 @RequiresApi(api = Build.VERSION_CODES.N)
 public class MainActivity extends AppCompatActivity {
@@ -29,6 +30,8 @@ static List<Demo> Dml;
     private SimpleDateFormat simple_format = new SimpleDateFormat("MM/dd");
     private String data = " [{\"id\":\"20年03月24日\",\"title\":\"FlexibleAdapter--一个强大的RecyclerView开源库\",\"gg\":\"hhhh\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"},{\"date\":\"20年03月24日\",\"name\":\"Apple\"},{\"date\":\"20年03月24日\",\"name\":\"banana\"}]";
   public static Context THIS;
+    DemoAdapter adapter;
+
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -42,13 +45,36 @@ static List<Demo> Dml;
         RecyclerView recyclerView = findViewById(R.id.recycler_view);
         LinearLayoutManager layoutManager= new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
-        DemoAdapter adapter = new DemoAdapter(Dml);
+         adapter = new DemoAdapter(Dml);
         recyclerView.setAdapter(adapter);
 
+        adapter.setOnItemClickListener(new DemoAdapter.OnItemClickListener() {
+            @Override
+            public void onItemClick(View view, int position) {
+                if(!adapter.isSelected.get(position)){
+                    adapter.isSelected.put(position, true); // 修改map的值保存状态
+                    adapter.notifyItemChanged(position);
+                    adapter.selectDates.add(Dml.get(position));
 
+                }else {
+                    adapter.isSelected.put(position, false); // 修改map的值保存状态
+                    adapter.notifyItemChanged(position);
+                    adapter.selectDates.remove(Dml.get(position));
+                }
+                Toast.makeText(THIS, "已选中"+adapter.selectDates.size()+"项", Toast.LENGTH_SHORT).show();
 
+            }
+
+            @Override
+            public void onItemLongClick(View view, int position) {
+
+            }
+        });
         
     }
+
+
+
     private void initFruits() {
         for(int i = 0; i < 10; i++) {
             Demo apple = new Demo("Apple",simple_format.format(new Date()));
