@@ -70,9 +70,9 @@ public class Gun extends AbstractFlexibleItem<com.learndemo.androidx.FlexibleAda
 
             boolean md = adapter.isSelected(position);
             if(md){
-                holder.gun_name.setBackgroundColor(0xFF2B2B2B);
+                holder.getContentView().setBackgroundColor(0xFF2B2B2B);
             }else{
-                holder.gun_name.setBackgroundColor(0xFFFFFFFF);
+                holder.getContentView().setBackgroundColor(0xFFFFFFFF);
             }
         }
 
@@ -89,5 +89,6 @@ public class Gun extends AbstractFlexibleItem<com.learndemo.androidx.FlexibleAda
                 gun_img = (ImageView) view.findViewById(R.id.gun_img);
             }
         }
+
 
 }

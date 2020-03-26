@@ -1,14 +1,9 @@
 package com.learndemo.androidx.FlexibleAdapterLearn;
 
-import android.app.AlertDialog;
 import android.content.Context;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.ActionMode;
-import android.view.Menu;
-import android.view.MenuItem;
 import android.view.View;
-import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.appcompat.app.AppCompatActivity;
@@ -25,15 +20,13 @@ import eu.davidea.flexibleadapter.FlexibleAdapter;
 import eu.davidea.flexibleadapter.SelectableAdapter;
 
 
-public class FlexibleAdapterMainActivity extends AppCompatActivity implements
-        ActionMode.Callback, FlexibleAdapter.OnItemLongClickListener  {
+public class FlexibleAdapterMainActivity extends AppCompatActivity {
 
     public static FlexibleAdapter<Gun> mAdapter;
-    private ActionMode mActionMode;
+    public static boolean isMultipleSelectionMode;
+    //  private ActionMode mActionMode;
     Context THIS;
     Context context;
-    private ActionMode mode;
-    private Menu menu;
     RecyclerView recyclerView;
 
     @Override
@@ -46,37 +39,35 @@ public class FlexibleAdapterMainActivity extends AppCompatActivity implements
         List<Gun> myItems = getDatabaseList();
 
 // Initialize the Adapter
-         mAdapter = new FlexibleAdapter<>(myItems);
-
+        mAdapter = new FlexibleAdapter<>(myItems);
+        mAdapter.setMode(SelectableAdapter.Mode.SINGLE);//初始化单选模式
         mAdapter.addListener(onLongClickListenerAdapter1);
         mAdapter.addListener(clickListenerAdapter1);
-
-
         recyclerView = findViewById(R.id.mRecyclerView);
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
         recyclerView.setAdapter(mAdapter);
-        recyclerView.setItemViewCacheSize(0);
+        recyclerView.setItemViewCacheSize(0);//设置缓存
     }
+
     private void toggleSelection(int position) {
         // Mark the position selected
         mAdapter.toggleSelection(position);
-
         int count = mAdapter.getSelectedItemCount();
 
         if (count == 0) {
-            mActionMode.finish();
-            mActionMode = null;
+            mAdapter.setMode(SelectableAdapter.Mode.IDLE);
         } else {
             setContextTitle(count);
+            mAdapter.setMode(SelectableAdapter.Mode.MULTI);
         }
         mAdapter.notifyDataSetChanged();
     }
 
     private void setContextTitle(int count) {
-        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
-                getString(R.string.action_selected_one) :
-                getString(R.string.action_selected_many)));
+//        mActionMode.setTitle(String.valueOf(count) + " " + (count == 1 ?
+//                getString(R.string.action_selected_one) :
+//                getString(R.string.action_selected_many)));
     }
 
 
@@ -84,13 +75,13 @@ public class FlexibleAdapterMainActivity extends AppCompatActivity implements
             new FlexibleAdapter.OnItemClickListener() {
                 @Override
                 public boolean onItemClick(View view, int position) {
-                    if (mActionMode != null && position != RecyclerView.NO_POSITION) {
+                    if (mAdapter.getMode() == SelectableAdapter.Mode.MULTI && position != RecyclerView.NO_POSITION) {
                         // Mark the position selected
                         toggleSelection(position);
 
                         return true;
                     } else {
-
+Toast.makeText(context,"单选模式点击",Toast.LENGTH_SHORT).show();
                         // Handle the item click listener
                         // We don't need to activate anything
                         return false;
@@ -102,10 +93,10 @@ public class FlexibleAdapterMainActivity extends AppCompatActivity implements
             new FlexibleAdapter.OnItemLongClickListener() {
                 @Override
                 public void onItemLongClick(int position) {
-                    if (mActionMode == null) {
-                        mActionMode = startActionMode(new SelectionCallBack(mAdapter,THIS));
+                    if (mAdapter.getMode() != SelectableAdapter.Mode.MULTI) {
+                        //mActionMode = startActionMode(new SelectionCallBack(mAdapter,THIS));
                         toggleSelection(position);
-                    }else {
+                    } else {
                         mAdapter.clearSelection();
                         toggleSelection(-1);
                     }
@@ -128,36 +119,13 @@ public class FlexibleAdapterMainActivity extends AppCompatActivity implements
                 "美国M1911A1式手枪",
                 "捷克CZ83型手枪",
                 "前苏联托卡列夫手枪"};
-        String[] introduction = AssetsReader.getText("introduction.txt",context).split("。");
-        Log.v("split",introduction[0]);
+        String[] introduction = AssetsReader.getText("introduction.txt", context).split("。");
+        Log.v("split", introduction[0]);
         for (int i = 1; i <= 10; i++) {
-            list.add(new Gun(names[i-1], introduction[i-1], AssetsReader.getImage(context, "33752726_" + i + ".jpg")));
+            list.add(new Gun(names[i - 1], introduction[i - 1], AssetsReader.getImage(context, "33752726_" + i + ".jpg")));
         }
         return list;
     }
 
-    @Override
-    public boolean onCreateActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
 
-    @Override
-    public boolean onPrepareActionMode(ActionMode mode, Menu menu) {
-        return false;
-    }
-
-    @Override
-    public boolean onActionItemClicked(ActionMode mode, MenuItem item) {
-        return false;
-    }
-
-    @Override
-    public void onDestroyActionMode(ActionMode mode) {
-
-    }
-
-    @Override
-    public void onItemLongClick(int position) {
-
-    }
 }

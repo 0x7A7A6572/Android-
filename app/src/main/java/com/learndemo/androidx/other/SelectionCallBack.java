@@ -1,11 +1,13 @@
-package com.learndemo.androidx.FlexibleAdapterLearn;
+package com.learndemo.androidx.other;
 
 import android.content.Context;
 import android.view.ActionMode;
 import android.view.Menu;
 import android.view.MenuItem;
+import android.view.View;
 import android.widget.Toast;
 
+import com.learndemo.androidx.FlexibleAdapterLearn.Gun;
 import com.learndemo.androidx.R;
 
 import eu.davidea.flexibleadapter.FlexibleAdapter;
@@ -44,11 +46,12 @@ public class SelectionCallBack  implements ActionMode.Callback {
             switch (item.getItemId()) {
                 case R.id.action_select_all:
                     mAdapter.selectAll();
-
+                    mAdapter.notifyDataSetChanged();
                     Toast.makeText(thisActivity,"warning!",Toast.LENGTH_SHORT).show();
 
                     break;
                 case R.id.action_delete:
+                    mAdapter.removeAllSelectedItems();
                     Toast.makeText(thisActivity,"favourite!",Toast.LENGTH_SHORT).show();
                     mode.finish();
                     break;
@@ -63,5 +66,6 @@ public class SelectionCallBack  implements ActionMode.Callback {
             mAdapter.setMode(SelectableAdapter.Mode.IDLE);
             mActionMode = null;
         }
+
 
 }
